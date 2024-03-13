@@ -1,5 +1,6 @@
 import BackgroundImg from '@assets/background.png'
 import LogoSvg from '@assets/logo.svg'
+import { Input } from '@components/Input'
 import { Center, Heading, Image, Text, VStack } from 'native-base'
 
 export function Signin() {
@@ -22,6 +23,7 @@ export function Signin() {
           Acesse sua conta
         </Heading>
       </Center>
+      <Input />
     </VStack>
   )
 }
