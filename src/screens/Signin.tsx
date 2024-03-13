@@ -23,7 +23,12 @@ export function Signin() {
           Acesse sua conta
         </Heading>
       </Center>
-      <Input />
+      <Input
+        placeholder="E-mail"
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <Input placeholder="Senha" secureTextEntry />
     </VStack>
   )
 }
