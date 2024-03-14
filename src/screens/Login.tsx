@@ -21,6 +21,7 @@ export function Login() {
       <VStack flex={1} px={8} pb={16}>
         <Image
           source={BackgroundImg}
+          defaultSource={BackgroundImg}
           alt="Pessoas treinando"
           resizeMode="contain"
           position="absolute"
