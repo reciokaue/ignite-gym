@@ -31,7 +31,7 @@ export function Home() {
             key={item}
             onPress={() => setSelectedGroup(item)}
             name={item}
-            isActive={selectedGroup === item}
+            isActive={selectedGroup.toUpperCase() === item.toUpperCase()}
           />
         )}
         horizontal
