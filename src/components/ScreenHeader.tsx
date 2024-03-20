@@ -1,4 +1,4 @@
-import { Center, Heading, VStack } from 'native-base'
+import { Center, Heading } from 'native-base'
 
 interface ScreenHeaderProps {
   title: string
