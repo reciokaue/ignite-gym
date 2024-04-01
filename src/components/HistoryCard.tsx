@@ -18,7 +18,12 @@ export function HistoryCard({ exercise, hour, muscleGroup }: HistoryCardProps) {
       alignItems="center"
     >
       <VStack mr={5} flex={1}>
-        <Heading color="white" fontSize="md" textTransform="capitalize">
+        <Heading
+          color="white"
+          fontSize="md"
+          textTransform="capitalize"
+          numberOfLines={1}
+        >
           {muscleGroup}
         </Heading>
         <Text

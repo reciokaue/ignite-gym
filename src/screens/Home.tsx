@@ -28,26 +28,25 @@ export function Home() {
     navigation.navigate('exercise')
   }
 
-  return (
-    <VStack flex={1}>
-      <HomeHeader />
-      <FlatList
-        data={groups}
-        renderItem={({ item }) => (
-          <Group
-            key={item}
-            onPress={() => setSelectedGroup(item)}
-            name={item}
-            isActive={selectedGroup.toUpperCase() === item.toUpperCase()}
-          />
-        )}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        _contentContainerStyle={{ px: 8 }}
-        my={10}
-        maxH={10}
-      />
-      <VStack flex={1} px={8}>
+  function HeaderContent() {
+    return (
+      <>
+        <FlatList
+          data={groups}
+          renderItem={({ item }) => (
+            <Group
+              key={item}
+              onPress={() => setSelectedGroup(item)}
+              name={item}
+              isActive={selectedGroup.toUpperCase() === item.toUpperCase()}
+            />
+          )}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          my={10}
+          maxH={10}
+          minH={10}
+        />
         <HStack justifyContent="space-between" mb={5}>
           <Heading color="gray.200" fontSize="sm">
             Exercicios
@@ -56,15 +55,22 @@ export function Home() {
             {exercises.length}
           </Text>
         </HStack>
-        <FlatList
-          data={exercises}
-          renderItem={({ item }) => (
-            <ExerciseCard onPress={handleOpenExerciseDetails} key={item} />
-          )}
-          showsVerticalScrollIndicator={false}
-          _contentContainerStyle={{ paddingBottom: 10 }}
-        />
-      </VStack>
+      </>
+    )
+  }
+
+  return (
+    <VStack flex={1}>
+      <HomeHeader />
+      <FlatList
+        data={exercises}
+        renderItem={({ item }) => (
+          <ExerciseCard onPress={handleOpenExerciseDetails} key={item} />
+        )}
+        ListHeaderComponent={HeaderContent}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 10, paddingHorizontal: 24 }}
+      />
     </VStack>
   )
 }
