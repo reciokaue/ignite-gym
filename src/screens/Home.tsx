@@ -1,6 +1,7 @@
 import { ExerciseCard } from '@components/ExerciseCard'
 import { Group } from '@components/Group'
 import { HomeHeader } from '@components/HomeHeader'
+import { useNavigation } from '@react-navigation/native'
 import { FlatList, Heading, HStack, Text, VStack } from 'native-base'
 import { useState } from 'react'
 
@@ -20,6 +21,12 @@ export function Home() {
     'Rosca concentrada',
   ])
   const [selectedGroup, setSelectedGroup] = useState('')
+
+  const navigation = useNavigation()
+
+  function handleOpenExerciseDetails() {
+    navigation.navigate('exercise')
+  }
 
   return (
     <VStack flex={1}>
@@ -51,7 +58,9 @@ export function Home() {
         </HStack>
         <FlatList
           data={exercises}
-          renderItem={({ item }) => <ExerciseCard key={item} />}
+          renderItem={({ item }) => (
+            <ExerciseCard onPress={handleOpenExerciseDetails} key={item} />
+          )}
           showsVerticalScrollIndicator={false}
           _contentContainerStyle={{ paddingBottom: 10 }}
         />

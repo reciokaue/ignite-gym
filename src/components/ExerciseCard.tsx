@@ -1,10 +1,12 @@
 import { Entypo } from '@expo/vector-icons'
 import { Heading, HStack, Icon, Image, Text, VStack } from 'native-base'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
 
-export function ExerciseCard() {
+interface ExerciseCardProps extends TouchableOpacityProps {}
+
+export function ExerciseCard({ ...rest }: ExerciseCardProps) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity {...rest}>
       <HStack
         bg="gray.500"
         alignItems="center"
