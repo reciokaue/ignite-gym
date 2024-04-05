@@ -1,6 +1,8 @@
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
 import { ScreenHeader } from '@components/ScreenHeader'
+import * as FileSystem from 'expo-file-system'
+import * as ImagePicker from 'expo-image-picker'
 import {
   Avatar,
   Center,
@@ -8,15 +10,57 @@ import {
   ScrollView,
   Skeleton,
   Text,
+  useToast,
   VStack,
 } from 'native-base'
 import { useState } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { Alert, TouchableOpacity } from 'react-native'
 
 const photo_size = 33
 
 export function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
+  const [userPhoto, setUserPhoto] = useState('https://github.com/reciokaue.png')
+
+  const toast = useToast()
+
+  async function handlePhotoSelect() {
+    setPhotoIsLoading(true)
+    try {
+      const { canceled, assets: photos } =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+          aspect: [4, 4],
+          allowsEditing: true,
+        })
+
+      const uri = photos && photos[0].uri
+
+      if (!canceled && uri) {
+        const { size: photoSize }: any = await FileSystem.getInfoAsync(uri)
+
+        if (photoSize && photoSize / 1024 / 1025 > 5)
+          toast.show({
+            title: 'Essa imagem é muito grande. Escolha uma de até 5MB',
+            placement: 'top',
+            bgColor: 'red.500',
+          })
+        else {
+          setUserPhoto(uri)
+
+          toast.show({
+            title: 'Imagem alterada com sucesso!',
+            placement: 'top',
+            bgColor: 'green.500',
+          })
+        }
+      }
+    } catch (e) {
+      console.log(e)
+    }
+    setPhotoIsLoading(false)
+  }
 
   return (
     <VStack flex={1}>
@@ -32,12 +76,9 @@ export function Profile() {
               endColor="gray.400"
             />
           ) : (
-            <Avatar
-              source={{ uri: 'https://github.com/reciokaue.png' }}
-              size={photo_size}
-            />
+            <Avatar source={{ uri: userPhoto }} size={photo_size} />
           )}
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handlePhotoSelect}>
             <Text
               color="green.500"
               fontWeight="bold"

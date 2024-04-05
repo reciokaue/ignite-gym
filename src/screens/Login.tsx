@@ -46,9 +46,6 @@ export function Login() {
         </Center>
 
         <Center mt={24}>
-          <Text color="gray.100" fontSize="sm" mb={3} fontFamily="body">
-            Voltar para o login
-          </Text>
           <Button
             onPress={handleNewAccount}
             title="Criar conta"
