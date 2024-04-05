@@ -69,7 +69,7 @@ export function Register() {
           </Text>
         </Center>
         <Center>
-          <Heading color="gray.100" fontSize="xl" mb={6} fontFamily="heading">
+          <Heading fontFamily="heading" color="gray.100" fontSize="xl" mb={6}>
             Crie sua conta
           </Heading>
           <Controller

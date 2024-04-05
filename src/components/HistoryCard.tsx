@@ -19,6 +19,7 @@ export function HistoryCard({ exercise, hour, muscleGroup }: HistoryCardProps) {
     >
       <VStack mr={5} flex={1}>
         <Heading
+          fontFamily="heading"
           color="white"
           fontSize="md"
           textTransform="capitalize"

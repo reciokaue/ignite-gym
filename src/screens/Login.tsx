@@ -33,7 +33,7 @@ export function Login() {
           </Text>
         </Center>
         <Center>
-          <Heading color="gray.100" fontSize="xl" mb={6} fontFamily="heading">
+          <Heading fontFamily="heading" color="gray.100" fontSize="xl" mb={6}>
             Acesse sua conta
           </Heading>
           <Input

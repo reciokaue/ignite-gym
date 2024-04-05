@@ -48,7 +48,7 @@ export function Home() {
           minH={10}
         />
         <HStack justifyContent="space-between" mb={5}>
-          <Heading color="gray.200" fontSize="sm">
+          <Heading fontFamily="heading" color="gray.200" fontSize="sm">
             Exercicios
           </Heading>
           <Text color="gray.200" fontSize="sm">
