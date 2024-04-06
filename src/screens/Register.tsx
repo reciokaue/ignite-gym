@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorProps } from '@routes/auth'
 import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
 import { isAxiosError } from 'axios'
 import {
   Center,
@@ -59,13 +60,14 @@ export function Register() {
   async function handleSignUp({ email, name, password }: Props) {
     try {
       await api.post('/users', { email, name, password })
-    } catch (e) {
-      if (isAxiosError(e))
-        toast.show({
-          title: e.response?.data.message,
-          placement: 'top',
-          bgColor: 'red.500',
-        })
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      toast.show({
+        title: isAppError ? error.message : 'Não foi possível criar a conta.',
+        placement: 'top',
+        bgColor: 'red.500',
+      })
     }
   }
 
