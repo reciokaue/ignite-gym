@@ -7,7 +7,15 @@ import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorProps } from '@routes/auth'
 import { api } from '@services/api'
 import { isAxiosError } from 'axios'
-import { Center, Heading, Image, ScrollView, Text, VStack } from 'native-base'
+import {
+  Center,
+  Heading,
+  Image,
+  ScrollView,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -34,6 +42,7 @@ type Props = z.infer<typeof schema>
 
 export function Register() {
   const navigation = useNavigation<AuthNavigatorProps>()
+  const toast = useToast()
 
   function handleGoToLoginScreen() {
     navigation.navigate('login')
@@ -51,7 +60,12 @@ export function Register() {
     try {
       await api.post('/users', { email, name, password })
     } catch (e) {
-      if (isAxiosError(e)) console.log(e.response?.data)
+      if (isAxiosError(e))
+        toast.show({
+          title: e.response?.data.message,
+          placement: 'top',
+          bgColor: 'red.500',
+        })
     }
   }
 
