@@ -5,6 +5,8 @@ import { Input } from '@components/Input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorProps } from '@routes/auth'
+import { api } from '@services/api'
+import { isAxiosError } from 'axios'
 import { Center, Heading, Image, ScrollView, Text, VStack } from 'native-base'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -45,8 +47,12 @@ export function Register() {
     resolver: zodResolver(schema),
   })
 
-  function handleSignUp(data: Props) {
-    console.log('data', data)
+  async function handleSignUp({ email, name, password }: Props) {
+    try {
+      await api.post('/users', { email, name, password })
+    } catch (e) {
+      if (isAxiosError(e)) console.log(e.response?.data)
+    }
   }
 
   return (
