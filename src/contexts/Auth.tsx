@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+import axios from 'axios'
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { UserDTO } from 'src/DTOs/user'
 
@@ -7,17 +9,34 @@ interface AuthProviderProps {
 
 interface AuthContextData {
   user: UserDTO
+  login: (email: string, password: string) => Promise<void>
 }
 
 const AuthContext = createContext({} as AuthContextData)
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<UserDTO>({id: '1', name: 'Kaue', email: 'kaue@gmail.com', 'kaue.png'})
+  const [user, setUser] = useState<UserDTO>({} as UserDTO)
 
-  return <AuthContext.Provider value={{
-    user
+  async function login(email: string, password: string) {
+    try {
+      const { data } = await axios.post('/sessions', { email, password })
 
-  }}>{children}</AuthContext.Provider>
+      if (data.user) setUser(data)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => useContext(AuthContext)

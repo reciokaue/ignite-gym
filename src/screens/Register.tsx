@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorProps } from '@routes/auth'
 import { api } from '@services/api'
 import { AppError } from '@utils/AppError'
-import { isAxiosError } from 'axios'
 import {
   Center,
   Heading,
