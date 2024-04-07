@@ -1,3 +1,4 @@
+import { useAuth } from '@contexts/Auth'
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { Box, useTheme } from 'native-base'
 
@@ -6,6 +7,7 @@ import { AuthRoutes } from './auth'
 
 export function Routes() {
   const { colors } = useTheme()
+  const { user } = useAuth()
 
   const theme = DefaultTheme
   theme.colors.background = colors.gray[700]
@@ -14,8 +16,7 @@ export function Routes() {
   return (
     <Box flex={1} bg="gray.700">
       <NavigationContainer theme={theme}>
-        <AuthRoutes />
-        {/* <AppRoutes /> */}
+        {user.id ? <AppRoutes /> : <AuthRoutes />}
       </NavigationContainer>
     </Box>
   )

@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-import axios from 'axios'
+import { api } from '@services/api'
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { UserDTO } from 'src/DTOs/user'
 
@@ -19,9 +19,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function login(email: string, password: string) {
     try {
-      const { data } = await axios.post('/sessions', { email, password })
+      const { data } = await api.post('/sessions', { email, password })
 
-      if (data.user) setUser(data)
+      if (data.user) setUser(data.user)
     } catch (error) {
       throw error
     }

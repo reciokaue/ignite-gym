@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorProps } from '@routes/auth'
 import { AppError } from '@utils/AppError'
-import axios from 'axios'
 import {
   Center,
   Heading,
@@ -17,6 +16,7 @@ import {
   useToast,
   VStack,
 } from 'native-base'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -31,8 +31,10 @@ const schema = z.object({
 type Props = z.infer<typeof schema>
 
 export function Login() {
+  const [isLoading, setIsLoading] = useState(false)
+  const { login, user } = useAuth()
+
   const navigation = useNavigation<AuthNavigatorProps>()
-  const { login } = useAuth()
   const toast = useToast()
 
   const {
@@ -44,7 +46,10 @@ export function Login() {
   })
 
   async function handleLogin({ email, password }: Props) {
+    setIsLoading(true)
+
     await login(email, password).catch((error) => {
+      console.log(error)
       const isAppError = error instanceof AppError
 
       toast.show({
@@ -53,6 +58,8 @@ export function Login() {
         bgColor: 'red.500',
       })
     })
+    console.log(user)
+    setIsLoading(false)
   }
 
   function handleGoToRegister() {
@@ -111,7 +118,12 @@ export function Login() {
               />
             )}
           />
-          <Button onPress={handleSubmit(handleLogin)} title="Acessar" />
+          <Button
+            isLoading={isLoading}
+            disabled={isLoading}
+            onPress={handleSubmit(handleLogin)}
+            title="Acessar"
+          />
         </Center>
 
         <Center mt={24}>
