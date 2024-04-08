@@ -1,7 +1,13 @@
 /* eslint-disable no-useless-catch */
 import { api } from '@services/api'
-import { storageUserSave } from '@storage/storageUser'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { storageUserGet, storageUserSave } from '@storage/storageUser'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { UserDTO } from 'src/DTOs/user'
 
 interface AuthProviderProps {
@@ -30,6 +36,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw error
     }
   }
+
+  async function loadUserData() {
+    const userLogged = await storageUserGet()
+
+    if (userLogged) setUser(userLogged)
+  }
+
+  useEffect(() => {
+    loadUserData()
+  }, [])
 
   return (
     <AuthContext.Provider
