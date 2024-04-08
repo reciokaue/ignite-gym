@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 import { api } from '@services/api'
+import { storageUserSave } from '@storage/storageUser'
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { UserDTO } from 'src/DTOs/user'
 
@@ -21,7 +22,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const { data } = await api.post('/sessions', { email, password })
 
-      if (data.user) setUser(data.user)
+      if (data.user) {
+        setUser(data.user)
+        storageUserSave(data.user)
+      }
     } catch (error) {
       throw error
     }
