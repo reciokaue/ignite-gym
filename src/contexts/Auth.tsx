@@ -17,12 +17,14 @@ interface AuthProviderProps {
 interface AuthContextData {
   user: UserDTO
   login: (email: string, password: string) => Promise<void>
+  isLoadingUserStorage: boolean
 }
 
 const AuthContext = createContext({} as AuthContextData)
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO)
+  const [isLoadingUserStorage, setIsLoadingUserStorage] = useState(true)
 
   async function login(email: string, password: string) {
     try {
@@ -39,8 +41,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function loadUserData() {
     const userLogged = await storageUserGet()
-
     if (userLogged) setUser(userLogged)
+    setIsLoadingUserStorage(false)
   }
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       value={{
         user,
         login,
+        isLoadingUserStorage,
       }}
     >
       {children}
