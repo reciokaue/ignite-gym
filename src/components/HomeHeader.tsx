@@ -5,7 +5,7 @@ import { Avatar, Heading, HStack, Icon, Text, VStack } from 'native-base'
 import { TouchableOpacity } from 'react-native'
 
 export function HomeHeader() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
 
   return (
     <HStack bg="gray.600" pt={10} pb={4} px={8} alignItems="center">
@@ -22,7 +22,7 @@ export function HomeHeader() {
           {user.name}
         </Heading>
       </VStack>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={logout}>
         <Icon as={MaterialIcons} name="logout" color="gray.200" size={7} />
       </TouchableOpacity>
     </HStack>

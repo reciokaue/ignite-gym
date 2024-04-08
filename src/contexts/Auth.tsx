@@ -1,6 +1,10 @@
 /* eslint-disable no-useless-catch */
 import { api } from '@services/api'
-import { storageUserGet, storageUserSave } from '@storage/storageUser'
+import {
+  storageUserGet,
+  storageUserRemove,
+  storageUserSave,
+} from '@storage/storageUser'
 import {
   createContext,
   ReactNode,
@@ -16,8 +20,9 @@ interface AuthProviderProps {
 
 interface AuthContextData {
   user: UserDTO
-  login: (email: string, password: string) => Promise<void>
   isLoadingUserStorage: boolean
+  login: (email: string, password: string) => Promise<void>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext({} as AuthContextData)
@@ -39,6 +44,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function logout() {
+    setIsLoadingUserStorage(true)
+
+    setUser({} as UserDTO)
+    await storageUserRemove()
+
+    setIsLoadingUserStorage(false)
+  }
+
   async function loadUserData() {
     const userLogged = await storageUserGet()
     if (userLogged) setUser(userLogged)
@@ -53,8 +67,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         user,
-        login,
         isLoadingUserStorage,
+        login,
+        logout,
       }}
     >
       {children}
