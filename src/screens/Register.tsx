@@ -2,6 +2,7 @@ import BackgroundImg from '@assets/background.png'
 import LogoSvg from '@assets/logo.svg'
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
+import { useAuth } from '@contexts/Auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigation } from '@react-navigation/native'
 import { AuthNavigatorProps } from '@routes/auth'
@@ -16,6 +17,7 @@ import {
   useToast,
   VStack,
 } from 'native-base'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -41,8 +43,10 @@ const schema = z
 type Props = z.infer<typeof schema>
 
 export function Register() {
+  const [isLoading, setIsLoading] = useState(false)
   const navigation = useNavigation<AuthNavigatorProps>()
   const toast = useToast()
+  const { login } = useAuth()
 
   function handleGoToLoginScreen() {
     navigation.navigate('login')
@@ -58,7 +62,10 @@ export function Register() {
 
   async function handleSignUp({ email, name, password }: Props) {
     try {
+      setIsLoading(true)
+
       await api.post('/users', { email, name, password })
+      await login(email, password)
     } catch (error) {
       const isAppError = error instanceof AppError
 
@@ -68,6 +75,7 @@ export function Register() {
         bgColor: 'red.500',
       })
     }
+    setIsLoading(false)
   }
 
   return (
@@ -152,12 +160,16 @@ export function Register() {
           <Button
             onPress={handleSubmit(handleSignUp)}
             title="Criar e acessar"
+            isLoading={isLoading}
+            disabled={isLoading}
           />
           <Button
             mt={4}
             title="Fazer login"
             variant="outline"
             onPress={handleGoToLoginScreen}
+            isLoading={isLoading}
+            disabled={isLoading}
           />
         </Center>
       </VStack>
