@@ -1,6 +1,11 @@
 /* eslint-disable no-useless-catch */
 import { api } from '@services/api'
 import {
+  storageTokenGet,
+  storageTokenRemove,
+  storageTokenSave,
+} from '@storage/storageToken'
+import {
   storageUserGet,
   storageUserRemove,
   storageUserSave,
@@ -34,13 +39,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function login(email: string, password: string) {
     try {
       const { data } = await api.post('/sessions', { email, password })
-
-      if (data.user) {
-        setUser(data.user)
-        storageUserSave(data.user)
-      }
+      saveAuth(data.user, data.token, true)
     } catch (error) {
       throw error
+    }
+  }
+
+  async function saveAuth(user?: UserDTO, token?: string, storage?: boolean) {
+    if (user && token) {
+      if (storage) {
+        await storageUserSave(user)
+        await storageTokenSave(token)
+      }
+
+      api.defaults.headers.common.Authorization = `Bearer ${token}`
+      setUser(user)
     }
   }
 
@@ -49,13 +62,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     setUser({} as UserDTO)
     await storageUserRemove()
+    await storageTokenRemove()
 
     setIsLoadingUserStorage(false)
   }
 
   async function loadUserData() {
     const userLogged = await storageUserGet()
-    if (userLogged) setUser(userLogged)
+    const token = await storageTokenGet()
+
+    saveAuth(userLogged, token)
     setIsLoadingUserStorage(false)
   }
 
