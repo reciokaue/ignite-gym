@@ -5,24 +5,25 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Exercise } from '@screens/Exercise'
 import { History } from '@screens/History'
 import { Home } from '@screens/Home'
 import { Profile } from '@screens/Profile'
 import { useTheme } from 'native-base'
 import { Platform } from 'react-native'
+import { ExerciseDTO } from 'src/DTOs/exercise'
 
 type AppRoutes = {
   home: undefined
-  exercise: undefined
+  exercise: { exercise: ExerciseDTO }
   profile: undefined
   history: undefined
 }
 
-export type AppNavigatorProps = BottomTabNavigationProp<AppRoutes>
+export type NavigatorProps = BottomTabNavigationProp<AppRoutes>
 
 const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
-
 export function AppRoutes() {
   const { sizes, colors } = useTheme()
 

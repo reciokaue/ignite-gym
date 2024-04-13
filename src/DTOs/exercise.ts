@@ -2,6 +2,10 @@ export type ExerciseDTO = {
   id: number
   name: string
   series: number
-  repetitions: string
+  repetitions: number
   group: string
+  demo: string
+  thumb: string
+  created_at: string
+  updated_at: string
 }
