@@ -1,7 +1,6 @@
 import { ExerciseCard } from '@components/ExerciseCard'
 import { Group } from '@components/Group'
 import { HomeHeader } from '@components/HomeHeader'
-import { useNavigation } from '@react-navigation/native'
 import { NavigatorProps } from '@routes/app'
 import { api } from '@services/api'
 import { useQuery } from '@tanstack/react-query'
