@@ -5,6 +5,7 @@ import { Button } from '@components/Button'
 import { Feather } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { api } from '@services/api'
+import { AppError } from '@utils/AppError'
 import {
   Box,
   Heading,
@@ -13,8 +14,10 @@ import {
   Image,
   ScrollView,
   Text,
+  useToast,
   VStack,
 } from 'native-base'
+import { useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { ExerciseDTO } from 'src/DTOs/exercise'
 
@@ -24,14 +27,46 @@ interface ExerciseProps {
       exercise: ExerciseDTO
     }
   }
+  navigation: any
 }
 
 export function Exercise({ route }: ExerciseProps) {
-  const navigation = useNavigation()
+  const [isLoading, setIsLoading] = useState(false)
   const { exercise } = route.params
+
+  const navigation = useNavigation()
+  const toast = useToast()
 
   function handleGoBack() {
     navigation.goBack()
+  }
+
+  async function handleRegisterExercise() {
+    setIsLoading(true)
+    try {
+      await api.post('/history', {
+        exercise_id: exercise.id,
+      })
+
+      toast.show({
+        title: 'Exercício registrado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.700',
+      })
+
+      navigation.goBack()
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      toast.show({
+        title: isAppError
+          ? error.message
+          : 'Não foi possível registrar o exercício.',
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -97,7 +132,11 @@ export function Exercise({ route }: ExerciseProps) {
                 </Text>
               </HStack>
             </HStack>
-            <Button title="Marcar como realizado" />
+            <Button
+              onPress={handleRegisterExercise}
+              isLoading={isLoading}
+              title="Marcar como realizado"
+            />
           </Box>
         </VStack>
       </ScrollView>
