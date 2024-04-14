@@ -12,7 +12,7 @@ export function History() {
       const response = await api.get(`/history`)
       return response.data as HistoryListDTO[]
     },
-    refetchInterval: 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
   })
 
   return (
@@ -40,7 +40,7 @@ export function History() {
         )}
         px={8}
         contentContainerStyle={
-          !history && { flex: 1, justifyContent: 'center' }
+          !isLoading && !history && { flex: 1, justifyContent: 'center' }
         }
         ListEmptyComponent={() =>
           isLoading ? (
@@ -52,7 +52,7 @@ export function History() {
                 rounded="md"
                 startColor="gray.500"
                 endColor="gray.400"
-                mt={2}
+                mt={i === 0 ? 24 : 4}
               />
             ))
           ) : (
