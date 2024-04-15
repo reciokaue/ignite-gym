@@ -2,9 +2,15 @@ import { FormControl, IInputProps, Input as NativeBaseInput } from 'native-base'
 
 type Props = IInputProps & {
   errorMessage?: string | any
+  disabled?: boolean
 }
 
-export function Input({ errorMessage, isInvalid, ...rest }: Props) {
+export function Input({
+  errorMessage,
+  isInvalid,
+  disabled = false,
+  ...rest
+}: Props) {
   const invalid = !!errorMessage || isInvalid
 
   return (
@@ -28,6 +34,7 @@ export function Input({ errorMessage, isInvalid, ...rest }: Props) {
           borderWidth: 1,
           borderColor: 'red.500',
         }}
+        isDisabled={disabled}
         {...rest}
       />
       <FormControl.ErrorMessage _text={{ color: 'red.500' }}>
