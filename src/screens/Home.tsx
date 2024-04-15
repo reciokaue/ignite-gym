@@ -1,6 +1,7 @@
 import { ExerciseCard } from '@components/ExerciseCard'
 import { Group } from '@components/Group'
 import { HomeHeader } from '@components/HomeHeader'
+import { useNavigation } from '@react-navigation/native'
 import { NavigatorProps } from '@routes/app'
 import { api } from '@services/api'
 import { useQuery } from '@tanstack/react-query'
@@ -16,8 +17,9 @@ import {
 import { useState } from 'react'
 import { ExerciseDTO } from 'src/DTOs/exercise'
 
-export function Home({ navigation: { navigate } }: NavigatorProps) {
+export function Home() {
   const [selectedGroup, setSelectedGroup] = useState('')
+  const navigation = useNavigation<NavigatorProps>()
 
   const { data: groups } = useQuery({
     queryKey: ['groups'],
@@ -35,7 +37,7 @@ export function Home({ navigation: { navigate } }: NavigatorProps) {
   })
 
   function handleOpenExerciseDetails(exercise: ExerciseDTO) {
-    navigate('exercise', { exercise })
+    navigation.navigate('exercise', { exercise })
   }
 
   return (
@@ -46,8 +48,8 @@ export function Home({ navigation: { navigate } }: NavigatorProps) {
           data={groups}
           renderItem={({ item }) => (
             <Group
-              key={item}
               name={item}
+              key={`g-${item}`}
               onPress={() => setSelectedGroup(item)}
               isActive={selectedGroup.toUpperCase() === item.toUpperCase()}
             />
@@ -59,22 +61,22 @@ export function Home({ navigation: { navigate } }: NavigatorProps) {
         />
       </VStack>
       <FlatList
-        data={exercises || []}
-        ListHeaderComponent={
-          <HStack justifyContent="space-between" mb={5}>
+        data={exercises}
+        ListHeaderComponent={() => (
+          <HStack key="ListHeader" justifyContent="space-between" mb={5}>
             <Heading fontFamily="heading" color="gray.200" fontSize="sm">
               Exercícios
             </Heading>
             <Text color="gray.200" fontSize="sm">
-              {exercises?.length || ''}
+              {exercises && exercises?.length}
             </Text>
           </HStack>
-        }
+        )}
         renderItem={({ item }) => (
           <ExerciseCard
             data={item}
             onPress={() => handleOpenExerciseDetails(item)}
-            key={item.id}
+            key={`e-${item.id}`}
           />
         )}
         showsVerticalScrollIndicator={false}
