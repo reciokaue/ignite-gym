@@ -1,3 +1,4 @@
+import defaultUserPhoto from '@assets/userPhotoDefault.png'
 import { Button } from '@components/Button'
 import { Input } from '@components/Input'
 import { ScreenHeader } from '@components/ScreenHeader'
@@ -63,11 +64,10 @@ const schema = z
 type Props = z.infer<typeof schema>
 
 export function Profile() {
-  const [photoIsLoading, setPhotoIsLoading] = useState(false)
-  const [userPhoto, setUserPhoto] = useState('https://github.com/reciokaue.png')
-
-  const toast = useToast()
   const { user, updateUser } = useAuth()
+
+  const [photoIsLoading, setPhotoIsLoading] = useState(false)
+  const toast = useToast()
 
   const {
     control,
@@ -122,30 +122,49 @@ export function Profile() {
           aspect: [4, 4],
           allowsEditing: true,
         })
-
-      const uri = photos && photos[0].uri
+      const { uri, type } = photos ? photos[0] : { uri: '', type: '' }
 
       if (!canceled && uri) {
         const { size: photoSize }: any = await FileSystem.getInfoAsync(uri)
 
-        if (photoSize && photoSize / 1024 / 1025 > 5)
-          toast.show({
-            title: 'Essa imagem é muito grande. Escolha uma de até 5MB',
-            placement: 'top',
-            bgColor: 'red.500',
+        if (photoSize && photoSize / 1024 / 1024 < 5) {
+          const fileExtension = uri?.split('.').pop()
+          const photoFile: any = {
+            uri,
+            type: `${type}/${fileExtension}`,
+            name: `${user.name}`,
+          }
+          const uploadForm = new FormData()
+          uploadForm.append('avatar', photoFile)
+          console.log(uploadForm)
+
+          const { data } = await api.patch('/users/avatar', uploadForm, {
+            headers: { 'Content-type': 'multipart/form-data' },
           })
-        else {
-          setUserPhoto(uri)
+          updateUser({
+            ...user,
+            avatar: `${api.defaults.baseURL}/avatar/${data.avatar}`,
+          })
 
           toast.show({
             title: 'Imagem alterada com sucesso!',
             placement: 'top',
             bgColor: 'green.500',
           })
+        } else {
+          throw new AppError('Imagem grande demais. Escolha uma de até 5MB')
         }
       }
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+
+      toast.show({
+        title: isAppError
+          ? error.message
+          : 'Não foi possível atualizar os dados',
+        placement: 'top',
+        bgColor: 'red.500',
+      })
     }
     setPhotoIsLoading(false)
   }
@@ -164,7 +183,10 @@ export function Profile() {
               endColor="gray.400"
             />
           ) : (
-            <Avatar source={{ uri: userPhoto }} size={photo_size} />
+            <Avatar
+              source={user.avatar ? { uri: user.avatar } : defaultUserPhoto}
+              size={photo_size}
+            />
           )}
           <TouchableOpacity onPress={handlePhotoSelect}>
             <Text
