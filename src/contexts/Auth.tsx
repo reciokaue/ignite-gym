@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-catch */
 import { api } from '@services/api'
 import {
@@ -40,17 +41,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function login(email: string, password: string) {
     try {
       const { data } = await api.post('/sessions', { email, password })
-      saveAuth(data.user, data.token, true)
+      saveAuth(data.user, data.token, data.refresh_token, true)
     } catch (error) {
       throw error
     }
   }
 
-  async function saveAuth(user?: UserDTO, token?: string, storage?: boolean) {
+  async function saveAuth(
+    user?: UserDTO,
+    token?: string,
+    refresh_token?: string,
+    storage?: boolean,
+  ) {
     if (user && token) {
-      if (storage) {
+      if (storage && refresh_token) {
         await storageUserSave(user)
-        await storageTokenSave(token)
+        await storageTokenSave({ token, refresh_token })
       }
 
       api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -75,14 +81,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function loadUserData() {
     const userLogged = await storageUserGet()
-    const token = await storageTokenGet()
+    const { token, refresh_token } = await storageTokenGet()
 
-    saveAuth(userLogged, token)
+    saveAuth(userLogged, token || '', refresh_token || '')
     setIsLoadingUserStorage(false)
   }
 
   useEffect(() => {
     loadUserData()
+
+    const subscribe = api.registerInterceptTokenManager(logout)
+
+    return () => {
+      subscribe()
+    }
   }, [])
 
   return (
